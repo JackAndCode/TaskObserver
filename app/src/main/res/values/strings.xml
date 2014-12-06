@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TaskObserver</string>
+    <string name="hello_world">Might want to check the LogCat @ info level for something interesting</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
