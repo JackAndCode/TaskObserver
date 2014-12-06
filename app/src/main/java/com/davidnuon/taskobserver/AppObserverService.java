@@ -26,6 +26,7 @@ import java.util.Map;
 
 public class AppObserverService extends IntentService {
     public static final String TAG = "AppObserverService";
+    public static final String GETNUM = TAG + ".GETNUM";
 
     private Map<String, Integer> mAppLookup = new HashMap<>();
 
@@ -35,7 +36,7 @@ public class AppObserverService extends IntentService {
         final ActivityManager activityManager = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
         new Thread(new Runnable() {
             String currentApp = "";
-
+            int counter = 0;
             @Override
             public void run() {
                 while(true) {
@@ -53,6 +54,10 @@ public class AppObserverService extends IntentService {
                             currentApp = topLevelApp;
                         }
                         Log.i(TAG, String.format("%s : %d", topLevelApp, mAppLookup.get(topLevelApp)));
+                        Intent intent = new Intent(GETNUM);
+                        intent.putExtra("num", ++counter);
+
+                        AppObserverService.this.sendBroadcast(intent);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

@@ -1,22 +1,27 @@
 package com.davidnuon.taskobserver;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    private Intent mSerivceIntent;
-
+    TextView mNum;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mSerivceIntent = new Intent(this, AppObserverService.class);
-        startService(mSerivceIntent);
+
+        mNum = (TextView) findViewById(R.id.num);
+        Intent mServiceIntent = new Intent(this, AppObserverService.class);
+        startService(mServiceIntent);
     }
 
 
@@ -40,5 +45,32 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(AppObserverService.GETNUM);
+        this.registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(mReceiver);
+    }
+
+    AppObserverServiceReceiver mReceiver = new AppObserverServiceReceiver();
+    class AppObserverServiceReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals(AppObserverService.GETNUM)) {
+                String num = String.valueOf(intent.getIntExtra("num", -1));
+                mNum.setText(num);
+            }
+        }
     }
 }
